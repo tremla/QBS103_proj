@@ -1,0 +1,127 @@
+"","id","age","sex","mechanical_ventilation","lactate.mmol.l.","gene","expression"
+"1","COVID_01_39y_male_NonICU","39"," male"," yes","0.9","A2M",0.21
+"2","COVID_02_63y_male_NonICU","63"," male"," no"," unknown","A2M",0.14
+"3","COVID_03_33y_male_NonICU","33"," male"," no"," unknown","A2M",0.03
+"4","COVID_04_49y_male_NonICU","49"," male"," no","0.87","A2M",0.09
+"5","COVID_05_49y_male_NonICU","49"," male"," yes","1.48","A2M",0
+"6","COVID_06_:y_male_NonICU"," :"," male"," no","0.86",NA,NA
+"7","COVID_07_38y_female_NonICU","38"," female"," no","1.17","A2M",0.23
+"8","COVID_08_78y_male_ICU","78"," male"," yes","1.65","A2M",0.08
+"9","COVID_09_64y_female_ICU","64"," female"," yes","1.14","A2M",0.88
+"10","COVID_10_62y_male_ICU","62"," male"," yes","1.45","A2M",0.13
+"11","COVID_11_52y_female_NonICU","52"," female"," no"," unknown","A2M",0.47
+"12","COVID_12_50y_male_ICU","50"," male"," yes","2.1","A2M",0.16
+"13","COVID_13_37y_male_NonICU","37"," male"," no"," unknown","A2M",0.07
+"14","COVID_14_55y_male_ICU","55"," male"," yes","1.35","A2M",0.22
+"15","COVID_15_68y_male_ICU","68"," male"," yes","1.35","A2M",0.07
+"16","COVID_16_48y_male_NonICU","48"," male"," no","1.23","A2M",0.58
+"17","COVID_17_54y_male_NonICU","54"," male"," no","1.47","A2M",0.15
+"18","COVID_18_70y_female_NonICU","70"," female"," no"," unknown","A2M",0.3
+"19","COVID_19_51y_male_NonICU","51"," male"," no"," unknown","A2M",0.11
+"20","COVID_20_62y_male_ICU","62"," male"," no","1.05","A2M",0.07
+"21","COVID_21_66y_male_ICU","66"," male"," yes","1","A2M",0
+"22","COVID_22_43y_male_ICU","43"," male"," yes","0.92","A2M",0.06
+"23","COVID_23_76y_male_ICU","76"," male"," yes","1.71","A2M",0.03
+"24","COVID_24_55y_male_ICU","55"," male"," yes"," unknown","A2M",0.11
+"25","COVID_25_55y_male_ICU","55"," male"," yes","0.94","A2M",0.09
+"26","COVID_26_41y_female_ICU","41"," female"," yes","0.8","A2M",0.18
+"27","COVID_27_71y_female_ICU","71"," female"," yes"," unknown","A2M",0.23
+"28","COVID_28_63y_male_ICU","63"," male"," yes"," unknown","A2M",0.18
+"29","COVID_29_63y_female_ICU","63"," female"," yes"," unknown","A2M",0.03
+"30","COVID_30_54y_male_ICU","54"," male"," yes","0.87","A2M",0.11
+"31","COVID_31_50y_male_ICU","50"," male"," yes","2.85","A2M",0.47
+"32","COVID_32_72y_male_ICU","72"," male"," yes","1.05","A2M",0.04
+"33","COVID_33_81y_male_NonICU","81"," male"," no","1.39","A2M",0.3
+"34","COVID_34_64y_female_NonICU","64"," female"," no","1.01","A2M",0.11
+"35","COVID_35_58y_female_NonICU","58"," female"," no"," unknown","A2M",0.51
+"36","COVID_36_68y_male_NonICU","68"," male"," yes","1.24","A2M",0.09
+"37","COVID_37_87y_male_NonICU","87"," male"," no"," unknown","A2M",0.09
+"38","COVID_38_68y_male_ICU","68"," male"," no"," unknown","A2M",0.1
+"39","COVID_39_80y_female_ICU","80"," female"," yes"," unknown","A2M",0.27
+"40","COVID_40_66y_male_ICU","66"," male"," yes","1.65","A2M",0.17
+"41","COVID_41_74y_male_ICU","74"," male"," yes","1.69","A2M",0.14
+"42","COVID_42_21y_female_ICU","21"," female"," yes"," unknown","A2M",0.33
+"43","COVID_43_83y_female_ICU","83"," female"," yes"," unknown","A2M",0
+"44","COVID_44_46y_male_ICU","46"," male"," yes","0.58","A2M",0.14
+"45","COVID_45_62y_female_ICU","62"," female"," yes","1.53","A2M",0.15
+"46","COVID_46_62y_male_ICU","62"," male"," yes","0.87","A2M",0.1
+"47","COVID_47_78y_male_ICU","78"," male"," yes","1.03","A2M",0.04
+"48","COVID_48_72y_female_ICU","72"," female"," yes","1.3","A2M",0.06
+"49","COVID_49_73y_male_ICU","73"," male"," yes","1.3","A2M",0.09
+"50","COVID_50_37y_male_ICU","37"," male"," yes","1.32","A2M",0.01
+"51","COVID_51_58y_female_NonICU","58"," female"," no","1.28","A2M",0.13
+"52","COVID_52_71y_male_NonICU","71"," male"," yes"," unknown","A2M",0
+"53","COVID_53_35y_female_NonICU","35"," female"," no","0.9","A2M",0.64
+"54","COVID_55_62y_female_ICU","62"," female"," yes","1.52","A2M",0.09
+"55","COVID_56_33y_female_NonICU","33"," female"," no"," unknown","A2M",0.16
+"56","COVID_57_30y_female_NonICU","30"," female"," no","0.66","A2M",0.27
+"57","COVID_58_62y_male_NonICU","62"," male"," no","0.77","A2M",0.08
+"58","COVID_59_55y_male_NonICU","55"," male"," no"," unknown","A2M",0.1
+"59","COVID_60_49y_male_NonICU","49"," male"," no","0.65","A2M",0.14
+"60","COVID_61_54y_female_NonICU","54"," female"," no"," unknown","A2M",0.1
+"61","COVID_62_78y_female_ICU","78"," female"," no","1.17","A2M",0.04
+"62","COVID_63_39y_female_ICU","39"," female"," yes","1.23","A2M",0.01
+"63","COVID_64_65y_male_ICU","65"," male"," yes","0.73","A2M",0.04
+"64","COVID_65_84y_male_NonICU","84"," male"," no","1.47","A2M",0.07
+"65","COVID_66_66y_female_NonICU","66"," female"," no"," unknown","A2M",0
+"66","COVID_67_57y_male_ICU","57"," male"," yes","0.74","A2M",0.35
+"67","COVID_68_79y_male_ICU","79"," male"," no","0.66","A2M",0.15
+"68","COVID_69_77y_female_NonICU","77"," female"," no"," unknown","A2M",0.29
+"69","COVID_70_81y_male_NonICU","81"," male"," no","1.05","A2M",0.07
+"70","COVID_71_37y_male_ICU","37"," male"," yes","0.8","A2M",0.12
+"71","COVID_72_50y_female_NonICU","50"," female"," no"," unknown","A2M",0.1
+"72","COVID_73_82y_male_NonICU","82"," male"," no"," unknown","A2M",0.02
+"73","COVID_74_55y_female_ICU","55"," female"," yes","1.33","A2M",0.12
+"74","COVID_75_55y_male_NonICU","55"," male"," no"," unknown","A2M",0.14
+"75","COVID_76_73y_female_ICU","73"," female"," yes"," unknown","A2M",0.09
+"76","COVID_77_55y_female_ICU","55"," female"," no"," unknown","A2M",0.01
+"77","COVID_78_80y_male_NonICU","80"," male"," no","1.26","A2M",0.2
+"78","COVID_79_27y_male_NonICU","27"," male"," no"," unknown","A2M",0.03
+"79","COVID_80_71y_male_ICU","71"," male"," no","1.88","A2M",0.05
+"80","COVID_82_67y_male_NonICU","67"," male"," no"," unknown","A2M",0.1
+"81","COVID_83_85y_female_NonICU","85"," female"," no","0.84","A2M",0.18
+"82","COVID_84_75y_female_NonICU","75"," female"," no","0.83","A2M",0.03
+"83","COVID_85_62y_male_ICU","62"," male"," no","0.5","A2M",0.04
+"84","COVID_86_52y_female_NonICU","52"," female"," no","unknown","A2M",0.27
+"85","COVID_87_61y_male_ICU","61"," male"," no","1.13","A2M",0.15
+"86","COVID_89_90y_female_NonICU"," >89"," female"," no","1.09","A2M",0.07
+"87","COVID_90_86y_female_NonICU","86"," female"," no"," unknown","A2M",0.05
+"88","COVID_91_29y_female_NonICU","29"," female"," no"," unknown","A2M",0.03
+"89","COVID_92_82y_female_ICU","82"," female"," no","0.97","A2M",0.02
+"90","COVID_93_81y_female_ICU","81"," female"," no","1.88","A2M",0.11
+"91","COVID_94_24y_female_NonICU","24"," female"," no"," unknown","A2M",0.17
+"92","COVID_95_49y_male_NonICU","49"," male"," no"," unknown","A2M",0.2
+"93","COVID_96_51y_male_NonICU","51"," male"," no"," unknown","A2M",0.02
+"94","COVID_97_76y_male_ICU","76"," male"," no","1.22","A2M",0.02
+"95","COVID_98_81y_male_NonICU","81"," male"," no","3.28","A2M",0.26
+"96","COVID_99_71y_male_ICU","71"," male"," no","1.18","A2M",0.02
+"97","COVID_100_74y_female_NonICU","74"," female"," no"," unknown","A2M",0.09
+"98","COVID_101_58y_male_ICU","58"," male"," no","2.43","A2M",0.11
+"99","COVID_102_84y_male_NonICU","84"," male"," yes"," unknown","A2M",0.01
+"100","COVID_103_83y_male_NonICU","83"," male"," no","1.58","A2M",0.03
+"101","NONCOVID_01_54y_female_NonICU","54"," female"," no"," unknown","A2M",0.04
+"102","NONCOVID_02_65y_male_ICU","65"," male"," yes","3.68","A2M",0.01
+"103","NONCOVID_03_65y_male_ICU","65"," male"," yes","1.88","A2M",0.05
+"104","NONCOVID_04_90y_male_NonICU"," >89"," male"," no","1.51","A2M",0.05
+"105","NONCOVID_05_83y_female_NonICU","83"," female"," no","1.27","A2M",0.01
+"106","NONCOVID_06_75y_female_ICU","75"," female"," no","2","A2M",0.14
+"107","NONCOVID_07_50y_male_ICU","50"," male"," no","3.02","A2M",0.07
+"108","NONCOVID_08_53y_female_ICU","53"," female"," yes","0.82","A2M",0.04
+"109","NONCOVID_09_49y_female_NonICU","49"," female"," no","0.79","A2M",0.04
+"110","NONCOVID_10_67y_male_ICU","67"," male"," yes","0.61","A2M",0.05
+"111","NONCOVID_11_58y_female_NonICU","58"," female"," no"," unknown","A2M",0.03
+"112","NONCOVID_12_82y_male_ICU","82"," male"," no","2.31","A2M",0.02
+"113","NONCOVID_13_65y_male_ICU","65"," male"," yes","3.35","A2M",0.04
+"114","NONCOVID_14_75y_female_ICU","75"," female"," yes","4.22","A2M",0.08
+"115","NONCOVID_15_83y_unknown_ICU","83"," unknown"," no","0.59","A2M",0.03
+"116","NONCOVID_16_40y_female_ICU","40"," female"," no","1.49","A2M",0.07
+"117","NONCOVID_17_84y_female_ICU","84"," female"," no","0.95","A2M",0.07
+"118","NONCOVID_18_88y_male_ICU","88"," male"," yes","1.15","A2M",0.06
+"119","NONCOVID_19_66y_female_ICU","66"," female"," yes","2.03","A2M",0.11
+"120","NONCOVID_20_62y_female_ICU","62"," female"," no","9.91","A2M",0.01
+"121","NONCOVID_21_71y_male_NonICU","71"," male"," no","0.73","A2M",0.04
+"122","NONCOVID_22_63y_male_NonICU","63"," male"," no"," unknown","A2M",0.02
+"123","NONCOVID_23_42y_female_NonICU","42"," female"," no","1.99","A2M",0.02
+"124","NONCOVID_24_32y_female_NonICU","32"," female"," no","0.87","A2M",0.27
+"125","NONCOVID_25_62y_male_NonICU","62"," male"," no","0.99","A2M",0.04
+"126","NONCOVID_26_36y_male_ICU","36"," male"," yes"," unknown","A2M",0.28

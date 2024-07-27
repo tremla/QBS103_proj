@@ -18,6 +18,7 @@ Part 1 includes:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
 ```
 
 ## R Markdown
@@ -28,8 +29,8 @@ setwd("C:/Users/AlexandraTreml/Desktop/MS/QBS103/Project/QBS103_proj")
 genes <- read.csv("genes_GSE157103.csv")
 participant <- read.csv("series_matrix_GSE157103.csv")
 
-#head(genes)
-#head(participant)
+head(genes)
+head(participant)
 
 # Rename the first column in genes to 'gene'
 genes <- genes %>%
@@ -43,7 +44,6 @@ genes <- genes %>%
 genes_long <- genes %>%
   tidyr::pivot_longer(cols = -gene, names_to = 'id', values_to = 'expression')
 #head(genes_long)
-
 
 # rename id column in participant, select my categorical covariates and continuous variable (+age for eda)
 participant <- participant %>%
@@ -84,37 +84,50 @@ levels(df$sex)
 ggplot(data = df, aes(x = expression, fill = sex)) + 
   geom_histogram(binwidth = 0.05, position = 'dodge') + 
   labs(x = 'Gene Expression', y = 'Frequency', title = 'A2M Gene Expression Among COVID ICU Patients') +  
-  scale_fill_manual(values = c("royalblue3", "violetred4"))
+  scale_fill_manual(values = c("violetred", "royalblue2"))
 
 ```
 ```{r}
 #create a scatterplot using gene expression and lactate 
 
-#PREP
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+
+# Convert lactate.mmol.l. to numeric
 df$lactate.mmol.l. <- as.numeric(df$lactate.mmol.l.)
+
+# Remove leading and trailing whitespaces from sex column
 df$sex <- trimws(df$sex)
+
 # Check unique levels
 unique(df$sex)
+
 # Set factor levels
 df$sex <- factor(df$sex, levels = c("male", "female"))
 
-# Create the scatterplot
-ggplot(df, aes(x = expression, y = lactate.mmol.l., color = sex)) + 
+# Filter out values greater than 6.5 for the y-axis
+df <- df %>% filter(lactate.mmol.l. <= 6.5)
+
+# Create the plot with the filtered data
+ggplot(df, aes(x = expression, y = lactate.mmol.l., color = sex, shape = sex)) + 
   geom_point(size = 3) + 
   scale_y_continuous(breaks = seq(0, ceiling(max(df$lactate.mmol.l., na.rm = TRUE)), by = 0.5)) +
-  geom_smooth(method = "lm", color = "black", se = FALSE) + 
+  geom_smooth(method = "lm", se = FALSE) + 
   labs(x = 'Gene Expression', y = 'Lactate (mmol/l)', title = 'Gene Expression vs Lactate for COVID ICU Patients') + 
-  theme_minimal(base_size = 5) +
+  theme_classic(base_size = 5) +
   scale_color_manual(values = c("male" = "royalblue2", "female" = "violetred3")) + 
-  theme( plot.title = element_text(hjust = 0.5, size = 18, face = "bold"), # Center and bold title
+  scale_shape_manual(values = c("male" = 16, "female" = 17)) +  
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 18, face = "bold"), # Center and bold title
     axis.title = element_text(size = 14, face = "bold"), # Bold axis titles
     axis.text = element_text(size = 12), # Increase axis text size
-    legend.title = element_text(size = 12), # Bold legend title
-    legend.text = element_text(size = 12), # Increase legend text size
-    panel.grid.major = element_line(size = 0.5, color = "grey90"), # Light major grid lines
-    panel.grid.minor = element_line(size = 0.25, color = "grey95") # Light minor grid lines
+    legend.title = element_text(size = 12), 
+    legend.text = element_text(size = 12) 
   )
+
 ```
+
 ```{r}
 #boxplot of gene expression separated by both ventilator, sex, and age group
 

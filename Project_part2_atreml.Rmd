@@ -1,0 +1,178 @@
+---
+title: "Project_part2_atreml"
+author: "Alexandra Treml"
+date: "2024-08-06"
+output:
+  pdf_document: default
+---
+Part 2 includes: 
+1. Build a function to create the plots from part 1.
+Your functions should take the following input: (1) the name of the data frame, (2) a list of 1 or more gene names, (3) 1 continuous covariate, and (4) two categorical covariates
+
+2. Select 2 additional genes (for a total of 3 genes) to look at and implement a loop to generate your figures using the function you created
+
+3. Present one of your boxplots in class.
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+## R Markdown
+
+```{r}
+#DATA CLEANING AND PREP
+
+# Set the working directory and read in the files
+setwd("C:/Users/AlexandraTreml/Desktop/MS/QBS103/Project/QBS103_proj")
+genes <- read.csv("genes_GSE157103.csv")
+participant <- read.csv("series_matrix_GSE157103.csv")
+
+# Rename the first column in genes to 'gene'
+genes <- genes %>%
+  rename(gene = X)
+
+# Pivot the genes dataframe
+genes_long <- genes %>%
+  tidyr::pivot_longer(cols = -gene, names_to = 'id', values_to = 'expression')
+#head(genes_long)
+
+# rename id column in participant, select my categorical covariates and continuous variable (+age for eda)
+participant <- participant %>%
+  filter(icu_status == ' yes') %>%
+  rename(id = participant_id) %>%
+  select(id, age, sex, mechanical_ventilation, lactate.mmol.l.)
+#head(participant)
+
+#join 2 dataframes
+df <- left_join(participant, genes_long, by = "id")
+
+#clean up new dataframe
+
+#fill lactate unknowns with NA 
+df$lactate.mmol.l.[df$lactate.mmol.l. == " unknown"] <- NA
+#fill sex unknowns with NA 
+df$sex[df$sex == " unknown"] <- NA
+#remove : from age, and fill with NA
+df$age[df$age == " :"] <- NA
+
+head(df)
+```
+```{r}
+library(ggplot2)
+library(dplyr)
+
+hist_func <- function(df, gene_name, cont_covar, cat_covar1, cat_covar2) {
+  df <- na.omit(df)
+  
+  #convert to symbols to use in plotting - unsure how to correct this
+  cont_covar <- sym(cont_covar)
+  cat_covar1 <- sym(cat_covar1)
+  cat_covar2 <- sym(cat_covar2)
+  
+  df <- df %>% 
+    filter(gene == gene_name) %>%
+    select(id, gene, !!cont_covar, !!cat_covar1, !!cat_covar2)
+  
+  df[[as.character(cat_covar1)]] <- as.factor(df[[as.character(cat_covar1)]])
+  
+  ggplot(data = df, aes(x = !!cont_covar, fill = !!cat_covar2)) + 
+    geom_histogram(binwidth = 0.05, position = 'dodge') + 
+    labs(x = 'Gene Expression', y = 'Frequency', 
+         title = paste(gene_name, 'Gene Expression Among COVID ICU Patients')) +  
+    scale_fill_manual(values = c("violetred", "royalblue2"))
+}
+
+# Call the function with column names as strings
+hist_func(df, 'A1CF', 'expression', 'age', 'sex')
+hist_func(df, 'A2M', 'expression', 'age', 'sex')
+hist_func(df, 'A4GALT', 'expression', 'age', 'sex')
+
+```
+
+
+```{r}
+#create a scatterplot using gene expression and lactate 
+
+# Load necessary libraries
+# Load necessary libraries
+library(dplyr)
+library(ggplot2)
+
+scatterplot_func <- function(df, gene_name, expression, cont_covar, cat_covar1, cat_covar2) {
+  
+  # Filter the dataframe based on the gene_name argument
+  df <- df %>% filter(gene == gene_name)
+  
+  # Convert columns to appropriate types
+  df[[cont_covar]] <- as.numeric(as.character(df[[cont_covar]]))
+  df[[cat_covar1]] <- trimws(as.character(df[[cat_covar1]]))
+  df[[cat_covar2]] <- trimws(as.character(df[[cat_covar2]]))
+  
+  # Convert categorical columns to factors
+  df[[cat_covar2]] <- factor(df[[cat_covar2]], levels = c("male", "female"))
+  df[[cat_covar1]] <- factor(df[[cat_covar1]], levels = c("yes", "no"))
+  
+  # Filter based on conditions
+  #df <- df %>% filter(df[[cont_covar]] <= 6.5, df[[expression]] <= 0.5)
+  
+  # Scatterplot
+  ggplot(df, aes_string(x = expression, y = cont_covar, color = cat_covar1, shape = cat_covar1)) + 
+    geom_point(size = 3) + 
+    scale_y_continuous(breaks = seq(0, ceiling(max(df[[cont_covar]], na.rm = TRUE)), by = 0.5)) +
+    geom_smooth(method = "lm", se = TRUE) + 
+    labs(x = 'Gene Expression', y = 'Lactate (mmol/l)', title = paste(gene_name, 'Gene Expression vs Lactate for COVID ICU Patients')) + 
+    theme_classic(base_size = 5) +
+    scale_color_brewer(palette = 'Dark2') +
+    scale_shape_manual(values = c(16, 17)) +  
+    theme(
+      plot.title = element_text(size = 16, face = "bold"), # Center and bold title
+      axis.title = element_text(size = 12, face = "bold"), # Bold axis titles
+      axis.text = element_text(size = 12), # Increase axis text size
+      legend.title = element_text(size = 12), 
+      legend.text = element_text(size = 12) 
+    )
+}
+
+# Example calls to the function
+scatterplot_func(df, 'A4GALT', 'expression', 'lactate.mmol.l.', 'mechanical_ventilation', 'sex')
+scatterplot_func(df, 'A2M', 'expression', 'lactate.mmol.l.', 'mechanical_ventilation', 'sex')
+scatterplot_func(df, 'A1CF', 'expression', 'lactate.mmol.l.', 'mechanical_ventilation', 'sex')
+
+```
+
+```{r}
+#boxplot of gene expression separated by both ventilator, sex, and age group
+
+scatterplot_func <- function(df, gene_name, expression, cont_covar, cat_covar1, cat_covar2) {
+  
+    df <- df %>% 
+    filter(gene == gene_name)
+
+
+    df$age <- as.numeric(df$age)
+
+    df$age_group <- cut(df$age,
+                     breaks = c(21, 30, 50, 70, 88),
+                    labels = c("21-30", "31-50", "51-70", "71-88"),
+                    right = TRUE)
+
+
+ggplot(df, aes(x = mechanical_ventilation, y = expression, color = sex)) +
+  geom_boxplot() +
+  scale_color_manual(values = c("male" = "royalblue1", "female" = "violetred1")) +
+  labs(x = 'Mechanical Ventilation', y = 'Gene Expression', title = 'A2M Gene Expression Among Ventilated vs Non-Ventilated COVID ICU Patients') +
+  theme_classic()
+
+ggplot(df, aes(x = age_group, y = expression, color = sex)) +
+  geom_boxplot() +
+  scale_color_manual(values = c("male" = "royalblue1", "female" = "violetred1")) +
+  labs(x = 'Age Group', y = 'Gene Expression', title = 'A2M Gene Expression Among COVID ICU Patient Age Groups') +
+  theme_classic()
+} 
+```
+
+
+
+

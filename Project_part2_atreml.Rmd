@@ -66,7 +66,7 @@ library(dplyr)
 hist_func <- function(df, gene_name, cont_covar, cat_covar1, cat_covar2) {
   df <- na.omit(df)
   
-  #convert to symbols to use in plotting - unsure how to correct this
+  #convert to symbols to use in plotting - unsure how to correct this otherwise
   cont_covar <- sym(cont_covar)
   cat_covar1 <- sym(cat_covar1)
   cat_covar2 <- sym(cat_covar2)
@@ -77,17 +77,21 @@ hist_func <- function(df, gene_name, cont_covar, cat_covar1, cat_covar2) {
   
   df[[as.character(cat_covar1)]] <- as.factor(df[[as.character(cat_covar1)]])
   
-  ggplot(data = df, aes(x = !!cont_covar, fill = !!cat_covar2)) + 
+  p <- ggplot(data = df, aes(x = !!cont_covar, fill = !!cat_covar2)) + 
     geom_histogram(binwidth = 0.05, position = 'dodge') + 
     labs(x = 'Gene Expression', y = 'Frequency', 
          title = paste(gene_name, 'Gene Expression Among COVID ICU Patients')) +  
     scale_fill_manual(values = c("violetred", "royalblue2"))
+  
+  print(p)
 }
 
-# Call the function with column names as strings
-hist_func(df, 'A1CF', 'expression', 'age', 'sex')
-hist_func(df, 'A2M', 'expression', 'age', 'sex')
-hist_func(df, 'A4GALT', 'expression', 'age', 'sex')
+genes <- c('A4GALT', 'A2M', 'A1CF')
+
+#loop through my gene names to create 3 plots
+for (gene in genes) {
+  hist_func(df, gene, 'expression', 'age', 'sex')
+}
 
 ```
 
@@ -118,7 +122,7 @@ scatterplot_func <- function(df, gene_name, expression, cont_covar, cat_covar1, 
   #df <- df %>% filter(df[[cont_covar]] <= 6.5, df[[expression]] <= 0.5)
   
   # Scatterplot
-  ggplot(df, aes_string(x = expression, y = cont_covar, color = cat_covar1, shape = cat_covar1)) + 
+  p <- ggplot(df, aes_string(x = expression, y = cont_covar, color = cat_covar1, shape = cat_covar1)) + 
     geom_point(size = 3) + 
     scale_y_continuous(breaks = seq(0, ceiling(max(df[[cont_covar]], na.rm = TRUE)), by = 0.5)) +
     geom_smooth(method = "lm", se = TRUE) + 
@@ -133,45 +137,75 @@ scatterplot_func <- function(df, gene_name, expression, cont_covar, cat_covar1, 
       legend.title = element_text(size = 12), 
       legend.text = element_text(size = 12) 
     )
+  print(p)
 }
 
-# Example calls to the function
-scatterplot_func(df, 'A4GALT', 'expression', 'lactate.mmol.l.', 'mechanical_ventilation', 'sex')
-scatterplot_func(df, 'A2M', 'expression', 'lactate.mmol.l.', 'mechanical_ventilation', 'sex')
-scatterplot_func(df, 'A1CF', 'expression', 'lactate.mmol.l.', 'mechanical_ventilation', 'sex')
+genes <- c('A4GALT', 'A2M', 'A1CF')
+
+#loop through my gene names to create 3 plots
+for (gene in genes) {
+  scatterplot_func(df, gene, 'expression', 'lactate.mmol.l.', 'mechanical_ventilation', 'sex')
+}
 
 ```
 
 ```{r}
-#boxplot of gene expression separated by both ventilator, sex, and age group
-
-scatterplot_func <- function(df, gene_name, expression, cont_covar, cat_covar1, cat_covar2) {
-  
+#boxplot of gene expression separated by both ventilator, sex
+boxplot_func <- function(df, gene_name, expression, cat_covar1, cat_covar2) {
+    df <- na.omit(df)
     df <- df %>% 
     filter(gene == gene_name)
+    
+    print(df)
 
+    p <- ggplot(df, aes_string(x = cat_covar1, y = expression, color = cat_covar2)) +
+      geom_boxplot() +
+      scale_fill_manual(values = c("male" = "royalblue1", "female" = "violetred1")) +
+      labs(x = cat_covar1, y = 'Gene Expression', title = paste(gene_name, 'Gene Expression Among Ventilated vs Non-Ventilated COVID ICU Patients')) +
+      theme_classic()
 
-    df$age <- as.numeric(df$age)
-
-    df$age_group <- cut(df$age,
-                     breaks = c(21, 30, 50, 70, 88),
-                    labels = c("21-30", "31-50", "51-70", "71-88"),
-                    right = TRUE)
-
-
-ggplot(df, aes(x = mechanical_ventilation, y = expression, color = sex)) +
-  geom_boxplot() +
-  scale_color_manual(values = c("male" = "royalblue1", "female" = "violetred1")) +
-  labs(x = 'Mechanical Ventilation', y = 'Gene Expression', title = 'A2M Gene Expression Among Ventilated vs Non-Ventilated COVID ICU Patients') +
-  theme_classic()
-
-ggplot(df, aes(x = age_group, y = expression, color = sex)) +
-  geom_boxplot() +
-  scale_color_manual(values = c("male" = "royalblue1", "female" = "violetred1")) +
-  labs(x = 'Age Group', y = 'Gene Expression', title = 'A2M Gene Expression Among COVID ICU Patient Age Groups') +
-  theme_classic()
+    print(p)
 } 
+
+genes <- c('A4GALT', 'A2M', 'A1CF')
+
+# Loop through gene names to create 3 plots
+for (gene in genes) {
+  boxplot_func(df, gene, 'expression', 'mechanical_ventilation', 'sex')
+}
+
 ```
+```{r}
+# Boxplot of gene expression separated by both ventilator, sex
+boxplot_func <- function(df, gene_name, expression, cat_covar1, cat_covar2) {
+  
+  # Filter the dataframe based on the gene_name argument
+  df <- df %>% filter(gene == gene_name)
+  
+  # Convert categorical variable to factor with specified levels
+  df[[cat_covar2]] <- factor(df[[cat_covar2]], levels = c("male", "female"))
+  
+  # Create the boxplot
+  p <- ggplot(df, aes_string(x = cat_covar1, y = expression, fill = cat_covar2)) +
+    geom_boxplot() +
+    scale_fill_manual(values = c("male" = "royalblue1", "female" = "violetred1")) +
+    labs(x = cat_covar1, y = 'Gene Expression', title = paste(gene_name, 'Gene Expression Among Ventilated vs Non-Ventilated COVID ICU Patients')) +
+    theme_classic()
+  
+  # Print the plot
+  print(p)
+}
+
+# Example gene names
+genes <- c('A4GALT', 'A2M', 'A1CF')
+
+# Loop through gene names to create plots
+for (gene in genes) {
+  boxplot_func(df, gene, 'expression', 'mechanical_ventilation', 'sex')
+}
+
+```
+
 
 
 

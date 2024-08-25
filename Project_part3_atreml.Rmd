@@ -25,8 +25,8 @@ participant <- read.csv("series_matrix_GSE157103.csv")
 
 # Rename the first column in genes to 'gene'
 genes <- genes %>%
-  rename(gene = X)
-  #filter(gene == "A2M")
+  rename(gene = X) %>%
+  filter(gene == "A2M")
 
 # Pivot the genes dataframe
 genes_long <- genes %>%
@@ -35,8 +35,8 @@ genes_long <- genes %>%
 #rename id column in participant, select my categorical covariates and continuous variable (+age for eda)
 participant <- participant %>%
   filter(icu_status == ' yes') %>%
-  rename(id = participant_id) %>%
-  select(id, age, sex, mechanical_ventilation, lactate.mmol.l.)
+  rename(id = participant_id)
+  #select(id, age, sex, mechanical_ventilation, lactate.mmol.l.)
 
 #join 2 dataframes
 df <- left_join(participant, genes_long, by = "id")
@@ -57,7 +57,7 @@ Part 1: Latex table of summary stats for all variables.
 # Load necessary libraries
 library(dplyr)
 library(stargazer)
-library(knitr)
+#library(knitr)
 
 # Convert columns to appropriate types
 df$fibrinogen <- as.numeric(df$fibrinogen)
@@ -180,28 +180,56 @@ ggplot(df, aes(x = mechanical_ventilation, y = expression, color = sex)) +
   scale_color_manual(values = c("male" = "royalblue1", "female" = "violetred1")) +
   labs(x = 'Mechanical Ventilation', y = 'Gene Expression', title = 'A2M Gene Expression Among Ventilated vs Non-Ventilated COVID ICU Patients') +
   theme_classic()
+```
+DATA PREP 
 
-ggplot(df, aes(x = age_group, y = expression, color = sex)) +
-  geom_boxplot() +
-  scale_color_manual(values = c("male" = "royalblue1", "female" = "violetred1")) +
-  labs(x = 'Age Group', y = 'Gene Expression', title = 'A2M Gene Expression Among COVID ICU Patient Age Groups') +
-  theme_classic()
+```{r}
+genes_1 <- read.csv("genes_GSE157103.csv")
+participant <- read.csv("series_matrix_GSE157103.csv")
+
+
+genes_1 <- genes_1 %>%
+  rename(gene = X)
+
+# Pivot the genes dataframe
+genes_long_1 <- genes_1 %>%
+  tidyr::pivot_longer(cols = -gene, names_to = 'id', values_to = 'expression')
+
+#rename id column in participant, select my categorical covariates and continuous variable (+age for eda)
+participant <- participant %>%
+  filter(icu_status == ' yes') %>%
+  rename(id = participant_id)
+  #select(id, age, sex, mechanical_ventilation, lactate.mmol.l.)
+
+#join 2 dataframes
+df1 <- left_join(participant, genes_long_1, by = "id")
+
+#fill lactate unknowns with NA 
+df1$lactate.mmol.l.[df1$lactate.mmol.l. == " unknown"] <- NA
+#fill sex unknowns with NA 
+df1$sex[df1$sex == " unknown"] <- NA
+#remove : from age, and fill with NA
+df1$age[df1$age == " :"] <- NA
+
+df1 <- na.omit(df1) #get rid of na
+
+head(df1)
 ```
 
-Part 3: Generate a Heat Map
+Part 3: Generate a Heat Map 
 ```{r}
 library(reshape2)
 
 ten_genes <- c("A1BG", "A1CF", "A2M", "A2ML1", "A3GALT2", "A4GALT", "AAAS", "AACS", "AADAC", "AAK1")
 
-df$age <- as.numeric(df$age)
+df1$age <- as.numeric(df1$age)
 
-df$age_group <- cut(df$age,
+df1$age_group <- cut(df1$age,
                     breaks = c(21, 30, 50, 70, 88),
                     labels = c("21-30", "31-50", "51-70", "71-88"),
                     right = TRUE)
 
-df_hm <- df %>%
+df_hm <- df1 %>%
   select(age_group, gene, expression, mechanical_ventilation, sex)%>%
   filter(gene %in% ten_genes)
 
@@ -225,6 +253,9 @@ pheatmap(heatmap_data,
 Part 4: A plot type we did not discuss in class
 ```{r}
 #percent of people in the ICU on mechanical ventilation
+
+df$mechanical_ventilation <- trimws(df$mechanical_ventilation)
+
 on_vent <- df %>%
   group_by(mechanical_ventilation) %>%
   summarize(count = n())
@@ -237,7 +268,7 @@ pie_chart <- ggplot(on_vent, aes(x = "", y = count, fill = mechanical_ventilatio
   coord_polar("y") + 
   labs(title = "Mechanical Ventilation Count Among ICU Patients") +
   theme_void() + 
-  scale_fill_manual(values = c(" yes" = "darkorange1", " no" = "cornflowerblue")) +
+  scale_fill_manual(values = c("yes" = "darkorange1", "no" = "cornflowerblue")) +
    geom_text(aes(label = count), 
             position = position_stack(vjust = 0.5))
 

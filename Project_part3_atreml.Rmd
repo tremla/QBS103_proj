@@ -219,6 +219,7 @@ head(df1)
 Part 3: Generate a Heat Map 
 ```{r}
 library(reshape2)
+library(pheatmap)
 
 ten_genes <- c("A1BG", "A1CF", "A2M", "A2ML1", "A3GALT2", "A4GALT", "AAAS", "AACS", "AADAC", "AAK1")
 

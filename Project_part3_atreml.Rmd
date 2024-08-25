@@ -1,64 +1,45 @@
 ---
-title: "Project_part1_atreml"
+title: "Project_part3"
 author: "Alexandra Treml"
-date: "2024-07-20"
+date: "2024-08-25"
 output:
   pdf_document: default
   html_document: default
 ---
-Part 1 includes: 
-1. set up git
-2. read in the data from genes and series matrix
-3. id 1 gene, 1 continuous variable, and 2 categorical covariates in the provided datasets (must link gene expression data and metadata)
-4. Generate 3 plots using ggplot2 for your covariates of choice
-  a. hist for gene expression
-  b. scatterplot for gene expression and continuous covariate
-  c. boxplot of gene expression separated by both categorical variables
-  
-  #should filter out ICU from Non-ICU
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+#install.packages("stargazer")
+library(stargazer)
 library(dplyr)
+library(ggplot2)
 ```
-
-## R Markdown
-
+DATA CLEANING AND PREP
 ```{r}
+#DATA CLEANING AND PREP
+
 # Set the working directory and read in the files
 setwd("C:/Users/AlexandraTreml/Desktop/MS/QBS103/Project/QBS103_proj")
 genes <- read.csv("genes_GSE157103.csv")
 participant <- read.csv("series_matrix_GSE157103.csv")
 
-#head(genes)
-#head(participant)
-
 # Rename the first column in genes to 'gene'
 genes <- genes %>%
   rename(gene = X)
-
-# Filter for 'A2M' gene
-genes <- genes %>%
-  filter(gene == "A2M")
+  #filter(gene == "A2M")
 
 # Pivot the genes dataframe
 genes_long <- genes %>%
   tidyr::pivot_longer(cols = -gene, names_to = 'id', values_to = 'expression')
-#head(genes_long)
 
-# rename id column in participant, select my categorical covariates and continuous variable (+age for eda)
+#rename id column in participant, select my categorical covariates and continuous variable (+age for eda)
 participant <- participant %>%
   filter(icu_status == ' yes') %>%
   rename(id = participant_id) %>%
   select(id, age, sex, mechanical_ventilation, lactate.mmol.l.)
-#head(participant)
 
 #join 2 dataframes
 df <- left_join(participant, genes_long, by = "id")
-# head(df)
-
-#clean up new dataframe
 
 #fill lactate unknowns with NA 
 df$lactate.mmol.l.[df$lactate.mmol.l. == " unknown"] <- NA
@@ -67,13 +48,68 @@ df$sex[df$sex == " unknown"] <- NA
 #remove : from age, and fill with NA
 df$age[df$age == " :"] <- NA
 
-#head(df)
+df <- na.omit(df) #get rid of na
 ```
-```{r}
-#create a histogram using sex and gene expression
 
-# Load the necessary library
-library(ggplot2)
+Part 1: Latex table of summary stats for all variables. 
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(stargazer)
+library(knitr)
+
+# Convert columns to appropriate types
+df$fibrinogen <- as.numeric(df$fibrinogen)
+df$lactate.mmol.l. <- as.numeric(df$lactate.mmol.l.)
+df$expression <- as.numeric(df$expression)
+df$sex <- as.factor(df$sex)
+df$mechanical_ventilation <- as.factor(df$mechanical_ventilation)
+df$gene <- as.factor(df$gene)
+df$crp.mg.l. <- as.numeric(df$crp.mg.l.)
+
+# Summary of numeric variables
+stargazer(df %>% select(expression, lactate.mmol.l., fibrinogen, crp.mg.l.), 
+          type = "text", 
+          summary.stat = c("mean", "sd", "n"),
+          digits = 2)
+
+sex_counts <- df %>%
+  group_by(sex) %>%
+  summarize(
+    count = n(),
+    n_percentage = (n()/nrow(df)) *100)
+
+gene_counts <- df %>%
+  group_by(gene) %>%
+  summarize(
+    count = n(),
+    n_percentage = (n()/nrow(df)) *100)
+
+vent_counts <- df %>%
+  group_by(mechanical_ventilation) %>%
+  summarize(
+    count = n(),
+    n_percentage = (n()/nrow(df)) *100)
+
+sex_counts <- sex_counts %>%
+  mutate(variable = "Sex")
+
+gene_counts <- gene_counts %>%
+  mutate(variable = "Gene")
+
+vent_counts <- vent_counts %>%
+  mutate(variable = "Mechanical Ventilation")
+
+cat_variables <- bind_rows(sex_counts, gene_counts, vent_counts)
+
+cat_variables <- cat_variables%>%
+  select(variable, count, n_percentage)
+
+stargazer(cat_variables, type = "text", summary = FALSE, rownames = FALSE)
+```
+Part 2: Generate a publication quality histogram, boxplot, and scatterplot
+```{r}
 df <- na.omit(df)
 df <- df %>% 
   select(id, gene, sex, age, mechanical_ventilation, expression, lactate.mmol.l.)
@@ -90,14 +126,6 @@ ggplot(data = df, aes(x = expression, fill = sex)) +
 
 ```
 ```{r}
-#create a scatterplot using gene expression and lactate 
-
-# Load necessary libraries
-library(dplyr)
-library(ggplot2)
-
-#head(df)
-
 # Convert lactate.mmol.l. to numeric
 df$lactate.mmol.l. <- as.numeric(df$lactate.mmol.l.)
 
@@ -126,8 +154,8 @@ ggplot(df, aes(x = expression, y = lactate.mmol.l., color = mechanical_ventilati
   geom_smooth(method = "lm", se = TRUE) + 
   labs(x = 'Gene Expression A2M', y = 'Lactate (mmol/l)', title = ' A2M Gene Expression vs Lactate for COVID ICU Patients') + 
   theme_classic(base_size = 5) +
-  #scale_color_brewer(palette = 'Dark2') +
-  scale_color_manual(values = c("yes" = "royalblue2", "no" = "violetred3")) + 
+  scale_color_brewer(palette = 'Dark2') +
+  #scale_color_manual(values = c("male" = "royalblue2", "female" = "violetred3")) + 
   scale_shape_manual(values = c(16, 17)) +  
   theme(
     plot.title = element_text(size = 16, face = "bold"), # Center and bold title
@@ -137,12 +165,7 @@ ggplot(df, aes(x = expression, y = lactate.mmol.l., color = mechanical_ventilati
     legend.text = element_text(size = 12) 
   )
 ```
-
 ```{r}
-#boxplot of gene expression separated by both ventilator, sex, and age group
-
-#head(df)
-
 df$age <- as.numeric(df$age)
 
 df$age_group <- cut(df$age,
@@ -164,6 +187,64 @@ ggplot(df, aes(x = age_group, y = expression, color = sex)) +
   labs(x = 'Age Group', y = 'Gene Expression', title = 'A2M Gene Expression Among COVID ICU Patient Age Groups') +
   theme_classic()
 ```
+
+Part 3: Generate a Heat Map
+```{r}
+library(reshape2)
+
+ten_genes <- c("A1BG", "A1CF", "A2M", "A2ML1", "A3GALT2", "A4GALT", "AAAS", "AACS", "AADAC", "AAK1")
+
+df$age <- as.numeric(df$age)
+
+df$age_group <- cut(df$age,
+                    breaks = c(21, 30, 50, 70, 88),
+                    labels = c("21-30", "31-50", "51-70", "71-88"),
+                    right = TRUE)
+
+df_hm <- df %>%
+  select(age_group, gene, expression, mechanical_ventilation, sex)%>%
+  filter(gene %in% ten_genes)
+
+#reshape
+heatmap_data <- dcast(df_hm, gene ~ age_group, value.var = "expression")
+rownames(heatmap_data) <- heatmap_data$gene
+heatmap_data <- heatmap_data[ , -1]
+
+#create heatmap with pheatmap
+pheatmap(heatmap_data,
+         cluster_rows = TRUE,
+         cluster_cols = TRUE,
+         display_numbers = TRUE,
+         number_format = "%.0f",  
+         fontsize_number = 6,
+         fontsize_row = 10,
+         fontsize_col = 10, 
+         main = "Gene Expression Heatmap by Age",)
+```
+
+Part 4: A plot type we did not discuss in class
+```{r}
+#percent of people in the ICU on mechanical ventilation
+on_vent <- df %>%
+  group_by(mechanical_ventilation) %>%
+  summarize(count = n())
+
+print(on_vent)
+unique(df$mechanical_ventilation)
+
+pie_chart <- ggplot(on_vent, aes(x = "", y = count, fill = mechanical_ventilation)) +
+  geom_bar(width = 1, stat = "identity") + 
+  coord_polar("y") + 
+  labs(title = "Mechanical Ventilation Count Among ICU Patients") +
+  theme_void() + 
+  scale_fill_manual(values = c(" yes" = "darkorange1", " no" = "cornflowerblue")) +
+   geom_text(aes(label = count), 
+            position = position_stack(vjust = 0.5))
+
+print(pie_chart)
+```
+
+
 
 
 

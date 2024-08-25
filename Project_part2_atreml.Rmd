@@ -17,6 +17,7 @@ Your functions should take the following input: (1) the name of the data frame, 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
+library(ggplot2)
 ```
 
 ## R Markdown

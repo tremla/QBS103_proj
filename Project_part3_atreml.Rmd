@@ -13,7 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(stargazer)
 library(dplyr)
 library(ggplot2)
+library(reshape2)
+library(pheatmap)
 ```
+
+
 DATA CLEANING AND PREP
 ```{r}
 #DATA CLEANING AND PREP
@@ -49,16 +53,12 @@ df$sex[df$sex == " unknown"] <- NA
 df$age[df$age == " :"] <- NA
 
 df <- na.omit(df) #get rid of na
+
 ```
 
 Part 1: Latex table of summary stats for all variables. 
 
 ```{r}
-# Load necessary libraries
-library(dplyr)
-library(stargazer)
-#library(knitr)
-
 # Convert columns to appropriate types
 df$fibrinogen <- as.numeric(df$fibrinogen)
 df$lactate.mmol.l. <- as.numeric(df$lactate.mmol.l.)
@@ -72,7 +72,8 @@ df$crp.mg.l. <- as.numeric(df$crp.mg.l.)
 stargazer(df %>% select(expression, lactate.mmol.l., fibrinogen, crp.mg.l.), 
           type = "text", 
           summary.stat = c("mean", "sd", "n"),
-          digits = 2)
+          digits = 2, 
+          out = "cont_var.tex")
 
 sex_counts <- df %>%
   group_by(sex) %>%
@@ -106,7 +107,7 @@ cat_variables <- bind_rows(sex_counts, gene_counts, vent_counts)
 cat_variables <- cat_variables%>%
   select(variable, count, n_percentage)
 
-stargazer(cat_variables, type = "text", summary = FALSE, rownames = FALSE)
+stargazer(cat_variables, type = "text", summary = FALSE, rownames = FALSE, out = "cat_variables.tex")
 ```
 Part 2: Generate a publication quality histogram, boxplot, and scatterplot
 ```{r}
@@ -212,15 +213,10 @@ df1$sex[df1$sex == " unknown"] <- NA
 df1$age[df1$age == " :"] <- NA
 
 df1 <- na.omit(df1) #get rid of na
-
-head(df1)
 ```
 
 Part 3: Generate a Heat Map 
 ```{r}
-library(reshape2)
-library(pheatmap)
-
 ten_genes <- c("A1BG", "A1CF", "A2M", "A2ML1", "A3GALT2", "A4GALT", "AAAS", "AACS", "AADAC", "AAK1")
 
 df1$age <- as.numeric(df1$age)
@@ -234,7 +230,7 @@ df_hm <- df1 %>%
   select(age_group, gene, expression, mechanical_ventilation, sex)%>%
   filter(gene %in% ten_genes)
 
-#reshape
+#reshape to plot in clustered rows and cols
 heatmap_data <- dcast(df_hm, gene ~ age_group, value.var = "expression")
 rownames(heatmap_data) <- heatmap_data$gene
 heatmap_data <- heatmap_data[ , -1]
@@ -261,7 +257,6 @@ on_vent <- df %>%
   group_by(mechanical_ventilation) %>%
   summarize(count = n())
 
-print(on_vent)
 unique(df$mechanical_ventilation)
 
 pie_chart <- ggplot(on_vent, aes(x = "", y = count, fill = mechanical_ventilation)) +
